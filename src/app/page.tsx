@@ -14,8 +14,9 @@ export default function Home() {
         if (user) {
           const response = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${user.category}`);
           const data = await response.json();
-          const topFiveRecipes = data.meals.slice(0, 5); 
-
+          const topFiveRecipes = data.meals.slice(0, 5);
+  
+          console.log(topFiveRecipes);
           setRecipes(topFiveRecipes);
         }
       } catch (error) {
@@ -24,8 +25,10 @@ export default function Home() {
     };
     fetchRecipes();
   }, [user]);
+  
 
   const toggleFavourite = (meal: RecipeType) => {
+    console.log(meal)
     if (user) {
       const isFavourite = user.savedRecipes.some(fav => fav.idMeal === meal.idMeal);
       if (isFavourite) {
@@ -36,7 +39,7 @@ export default function Home() {
       }
     }
   };
-
+  
   return (
     <>
       {user && (
