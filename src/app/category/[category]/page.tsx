@@ -18,8 +18,11 @@ const CategoryMealsPage = () => {
                 const data = await response.json();
                 setMeals(data.meals);
             } catch (error) {
-                const errorMessage = error instanceof Error ? error.message : "Ett okänt fel inträffade";
-                setError(errorMessage);
+                if (error instanceof Error) {
+                    setError(error.message);
+                } else {
+                    setError("Ett okänt fel inträffade");
+                }
                 console.error(error);
             }
         };
