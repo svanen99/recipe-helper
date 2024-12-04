@@ -28,7 +28,7 @@ export default function Home() {
   
 
   const toggleFavourite = (meal: RecipeType) => {
-    console.log(meal)
+    console.log(meal);
     if (user) {
       const isFavourite = user.savedRecipes.some(fav => fav.idMeal === meal.idMeal);
       if (isFavourite) {
@@ -39,6 +39,7 @@ export default function Home() {
       }
     }
   };
+  
   
   return (
     <>
