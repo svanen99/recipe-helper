@@ -1,19 +1,27 @@
-'use client'
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
+'use client';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+
+type Meal = {
+    idMeal: string;
+    strMeal: string;
+    strMealThumb: string;
+};
 
 const CategoryMealsPage = () => {
     const { category } = useParams();
-    const [meals, setMeals] = useState([]);
+    const [meals, setMeals] = useState<Meal[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMeals = async () => {
             try {
-                const response = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`);
+                const response = await fetch(
+                    `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
+                );
                 if (!response.ok) {
-                    throw new Error("Något gick fel vid hämtning av data");
+                    throw new Error('Något gick fel vid hämtning av data');
                 }
                 const data = await response.json();
                 setMeals(data.meals);
@@ -21,7 +29,7 @@ const CategoryMealsPage = () => {
                 if (error instanceof Error) {
                     setError(error.message);
                 } else {
-                    setError("Ett okänt fel inträffade");
+                    setError('Ett okänt fel inträffade');
                 }
                 console.error(error);
             }
@@ -34,7 +42,9 @@ const CategoryMealsPage = () => {
 
     return (
         <div>
-            <h2 className="text-3xl p-6 text-[#8e8ec5] underline">{category} Meals</h2>
+            <h2 className="text-3xl p-6 text-[#8e8ec5] underline">
+                {category} Meals
+            </h2>
             {error ? (
                 <p className="text-red-500 text-center font-semibold">{error}</p>
             ) : (
@@ -50,7 +60,9 @@ const CategoryMealsPage = () => {
                                     alt={meal.strMeal}
                                 />
                             </Link>
-                            <p className="text-[#8e8ec5] font-light text-xl m-4 text-center">{meal.strMeal}</p>
+                            <p className="text-[#8e8ec5] font-light text-xl m-4 text-center">
+                                {meal.strMeal}
+                            </p>
                         </div>
                     ))}
                 </div>
