@@ -1,6 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bad+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Edu+QLD+Beginner:wght@400..700&display=swap');
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 :root {
   --background: #ffffff;
@@ -9,7 +17,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #faf5f9;
     --foreground: #ededed;
   }
 }
@@ -17,11 +25,27 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  /* background-image: 
+  linear-gradient(45deg, #fbe5ea 20%, transparent 40%),
+  linear-gradient(-45deg, #fbe5ea 20%, transparent 40%),
+  linear-gradient(45deg, transparent 85%,  #f8f6d9 85%),
+  linear-gradient(-45deg, transparent 85%, #f8f6d9 85%);
+background-size: 70px 70px;
+background-position: 0 0, 0 40px, 30px -20px, -20px 0; */
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .font-montserrat {
+    font-family: 'Montserrat', sans-serif;
   }
-}
+
+  .font-lora {
+    font-family: 'Lora', cursive;
+  }
+
+  .font-play {
+    font-family: 'Playfair+Display';
+  }
+
+  .font-edu {
+    font-family: 'Edu+QLD+Beginner' ;
+  }
