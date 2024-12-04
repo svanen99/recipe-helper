@@ -1,13 +1,13 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { UserContextType } from "@/utils/types";
+import { UserContextType, Category } from "@/utils/types";
 import { useUserContext } from "@/utils/contexts";
 
 const CategoryPage = () => {
   const { user, updateUser } = useUserContext() as UserContextType;
   const { category } = useParams();
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const CategoryPage = () => {
     fetchCategories();
   }, []);
 
-  const handleCategoryClick = (category: any) => {
+  const handleCategoryClick = (category: string) => {
     router.push(`/category/${category}`);
   };
 
@@ -60,7 +60,7 @@ const CategoryPage = () => {
                 }`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleClick(category.strCategory);
+                  handleClick(category.strCategory); 
                 }}
               >
                 {user?.category === category.strCategory ? "✓ Selected" : "Set as Favourite"}
