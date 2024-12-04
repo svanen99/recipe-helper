@@ -1,10 +1,17 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-const UserContext = createContext();
+type UserContextType = {
+  user: any; 
+  setUser: React.Dispatch<React.SetStateAction<any>>; 
+  selectedCategory: string;
+  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
+};
 
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);  // Hanterar inloggad användare
-  const [selectedCategory, setSelectedCategory] = useState("Vegansk");  // Standardkategori
+const UserContext = createContext<UserContextType | undefined>(undefined);
+
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<any>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("Vegansk");
 
   return (
     <UserContext.Provider value={{ user, setUser, selectedCategory, setSelectedCategory }}>
@@ -13,4 +20,10 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
+};
