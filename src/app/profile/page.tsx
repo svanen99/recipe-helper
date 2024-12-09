@@ -1,40 +1,51 @@
-'use client';
+'use client'
 import { useUserContext } from '@/utils/contexts';
 import { RecipeType, UserContextType } from "@/utils/types";
-import Link from 'next/link';
+import Link from "next/link";
 
-const Profile = () => {
-  const { user } = useUserContext() as UserContextType;
+export default function Profile() {
+  const { user, updateUser } = useUserContext() as UserContextType;
+
+  const removeFavourite = (meal: RecipeType) => {
+    if (user) {
+      const updatedRecipes = user.savedRecipes.filter(fav => fav.idMeal !== meal.idMeal);
+      updateUser({ ...user, savedRecipes: updatedRecipes });
+    }
+  };
 
   return (
     <>
-      <h1 className="text-3xl p-6 text-[#8e8ec5] underline">Profile Page</h1>
-      {user && Array.isArray(user.savedRecipes) && user.savedRecipes.length > 0 ? (
-        <div>
-          <h2 className="text-[#8e8ec5] text-xl p-4">Your Favourite Recipes:</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4">
-            {user.savedRecipes.map((meal: RecipeType) => (
-              <div
-                className="group flex flex-col items-center text-center"
-                key={meal.idMeal}
-              >
-                <Link href={`/food/${meal.idMeal}`}>
-                  <img
-                    className="h-auto w-48 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
-                    src={meal.strMealThumb}
-                    alt={meal.strMeal}
-                  />
-                </Link>
-                <p className="text-black font-light text-l p-4">{meal.strMeal}</p>
-              </div>
-            ))}
-          </div>
+      {user && (
+        <div className="text-black font-light text-2xl m-10">
+          <h2 className="mb-6">Your Saved Recipes:</h2>
+          {user.savedRecipes.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-4">
+              {user.savedRecipes.map((meal: RecipeType) => (
+                <div className="group relative" key={meal.idMeal}>
+                  <Link href={`/food/${meal.idMeal}`}>
+                    <img
+                      className="w-full h-auto rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
+                      src={meal.strMealThumb}
+                      alt={meal.strMeal}
+                      height="auto"
+                      width="200px"
+                    />
+                  </Link>
+                  <p className="text-gray-600 text-lg font-light mt-4">{meal.strMeal}</p>
+                  <button
+                    onClick={() => removeFavourite(meal)}
+                    className="mt-2 text-sm text-red-500"
+                  >
+                    Remove from Favourites
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600 text-lg">You have no saved recipes yet.</p>
+          )}
         </div>
-      ) : (
-        <p className="text-[#8e8ec5] text-xl p-4">You do not have any saved recipes yet.</p>
       )}
     </>
   );
-};
-
-export default Profile;
+}
