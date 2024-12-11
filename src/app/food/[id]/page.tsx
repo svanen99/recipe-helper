@@ -1,9 +1,11 @@
 'use client'
-import { RecipeType } from "@/utils/types";
+import { useUserContext } from "@/utils/contexts";
+import { RecipeType, UserContextType } from "@/utils/types";
 import { useEffect, useState } from "react";
 
 const RecipePage = ({ params }: { params: { id: string } }) => {
     const { id } = params;
+    const { user, updateUser } = useUserContext() as UserContextType;
     const [recipe, setRecipe] = useState<RecipeType | null>(null);
 
     useEffect(() => {
@@ -22,6 +24,18 @@ const RecipePage = ({ params }: { params: { id: string } }) => {
         fetchRecipe();
     }, [id]);
 
+    const toggleFavourite = (recipe: RecipeType) => {
+        if (user) {
+            const isFavourite = user.savedRecipes.some(fav => fav.idMeal === recipe.idMeal);
+            if (isFavourite) {
+                const updatedRecipes = user.savedRecipes.filter(fav => fav.idMeal !== recipe.idMeal);
+                updateUser({ ...user, savedRecipes: updatedRecipes });
+            } else {
+                updateUser({ ...user, savedRecipes: [...user.savedRecipes, recipe] });
+            }
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#F9F6F2] flex flex-col items-center p-8">
             {recipe ? (
@@ -37,6 +51,12 @@ const RecipePage = ({ params }: { params: { id: string } }) => {
                         <p><strong>Area:</strong> {recipe.strArea}</p>
                         <p className="mt-4 text-left"><strong>Instructions:</strong> {recipe.strInstructions}</p>
                     </div>
+                    <button
+                        onClick={() => toggleFavourite(recipe)}
+                        className={`mt-4 text-sm ${user?.savedRecipes.some(fav => fav.idMeal === recipe.idMeal) ? 'text-red-500' : 'text-green-600'}`}
+                    >
+                        {user?.savedRecipes.some(fav => fav.idMeal === recipe.idMeal) ? 'Unfavourite' : 'Favourite'}
+                    </button>
                 </div>
             ) : (
                 <p className="text-xl font-semibold text-gray-600">Loading...</p>

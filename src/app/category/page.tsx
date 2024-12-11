@@ -1,13 +1,14 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { UserContextType, Category } from "@/utils/types";
+import { UserContextType, Category, RecipeType } from "@/utils/types";
 import { useUserContext } from "@/utils/contexts";
 
 const CategoryPage = () => {
   const { user, updateUser } = useUserContext() as UserContextType;
   const { category } = useParams();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,6 +23,35 @@ const CategoryPage = () => {
     };
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (category) {
+      const fetchRecipes = async () => {
+        try {
+          const response = await fetch(
+            `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
+          );
+          const data = await response.json();
+          setRecipes(data.meals);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchRecipes();
+    }
+  }, [category]);
+
+  const toggleFavourite = (meal: RecipeType) => {
+    if (user) {
+      const isFavourite = user.savedRecipes.some(fav => fav.idMeal === meal.idMeal);
+      if (isFavourite) {
+        const updatedRecipes = user.savedRecipes.filter(fav => fav.idMeal !== meal.idMeal);
+        updateUser({ ...user, savedRecipes: updatedRecipes });
+      } else {
+        updateUser({ ...user, savedRecipes: [...user.savedRecipes, meal] });
+      }
+    }
+  };
 
   const handleCategoryClick = (category: string) => {
     router.push(`/category/${category}`);
@@ -69,6 +99,29 @@ const CategoryPage = () => {
           </div>
         ))}
       </div>
+      {category && (
+        <div className="mt-12">
+          <h2 className="text-3xl text-center font-bold text-gray-800 mb-8">Recipes in {category}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4 md:px-12">
+            {recipes.map((meal) => (
+              <div key={meal.idMeal} className="group relative">
+                <img
+                  className="w-full h-auto rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl"
+                  src={meal.strMealThumb}
+                  alt={meal.strMeal}
+                />
+                <p className="text-gray-600 text-lg font-light mt-4">{meal.strMeal}</p>
+                <button
+                  onClick={() => toggleFavourite(meal)}
+                  className={`mt-2 text-sm ${user?.savedRecipes.some(fav => fav.idMeal === meal.idMeal) ? 'text-red-500' : 'text-green-600'}`}
+                >
+                  {user?.savedRecipes.some(fav => fav.idMeal === meal.idMeal) ? 'Unfavourite' : 'Favourite'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
